@@ -5,3 +5,5 @@ projectfiles
 .travis.yml
 BUILD
 mbed-os
+
+sc2_utf8.bin
