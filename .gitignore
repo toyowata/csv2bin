@@ -1,7 +1,7 @@
 .build
 .mbed
 projectfiles
-*.py*
+mbed_settings.py*
 .travis.yml
 BUILD
 mbed-os
