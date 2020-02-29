@@ -1,0 +1,7 @@
+.build
+.mbed
+projectfiles
+*.py*
+.travis.yml
+BUILD
+mbed-os
