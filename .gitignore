@@ -3,6 +3,7 @@
 projectfiles
 mbed_settings.py*
 .travis.yml
+.DS_Store
 BUILD
 mbed-os
 

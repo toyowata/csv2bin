@@ -2,11 +2,19 @@
 
 import csv
 
+MAX_LINE_CHAR = 40
+MAX_STATION_CHAR = 40
+
+# Column 1 : Area code (int, 1-byte)
+# Column 2 : Route code (int, 1-byte)
+# Column 3 : Station code (int, 1-byte)
+# Column 4 : Route name (string, max 40-bytes)
+# Column 5 : Station name (string, max 40-bytes)
+
 def main():
     f = open('sc2_utf8.csv', 'r')
 
     reader = csv.reader(f)
-    # header = next(reader)
     with open("sc2_utf8.bin", "wb") as fout:
         for row in reader:
             area = int(row[0])
@@ -21,11 +29,12 @@ def main():
 
             bary = bytearray([area, line, station])
             bary.extend(row[3].encode('utf-8'))
-            for x in range(40 - line_len):
+            for x in range(MAX_LINE_CHAR - line_len):
                 bary.append(0)
             bary.extend(row[4].encode('utf-8'))
-            for y in range(40 - station_len):
+            for y in range(MAX_STATION_CHAR - station_len):
                 bary.append(0)
+                
             fout.write(bary)
 
     f.close()

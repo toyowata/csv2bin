@@ -152,8 +152,6 @@ int main() {
 
     int err = fs.mount(bd);
     if (err) {
-        // Reformat if we can't mount the filesystem
-        // this should only happen on the first boot
         printf("No filesystem found, formatting... ");
         fflush(stdout);
         err = fs.reformat(bd);
@@ -183,7 +181,6 @@ int main() {
     }
     // printf("max-char = %d\n", max_char);
 
-    // Close the file which also flushes any cached writes
     err = fclose(f);
     if (err < 0) {
         error("error: %s (%d)\n", strerror(errno), -errno);
