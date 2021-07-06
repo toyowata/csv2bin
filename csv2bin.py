@@ -12,10 +12,10 @@ MAX_STATION_CHAR = 40
 # Column 5 : Station name (string, max 40-bytes)
 
 def main():
-    f = open('sc2_utf8.csv', 'r')
+    f = open('sc_utf8.csv', 'r')
 
     reader = csv.reader(f)
-    with open("sc2_utf8.bin", "wb") as fout:
+    with open("sc_utf8.bin", "wb") as fout:
         for row in reader:
             area = int(row[0])
             line = int(row[1])

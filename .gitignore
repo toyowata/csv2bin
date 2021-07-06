@@ -7,4 +7,4 @@ mbed_settings.py*
 BUILD
 mbed-os
 
-sc2_utf8.bin
+*.bin
