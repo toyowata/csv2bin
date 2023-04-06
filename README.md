@@ -11,5 +11,5 @@ $ python3 csv2bin.py
 ## C言語配列への変換
 
 ```
-$ xxd -i sc_utf8.bin > sc_utf8.c
+$ xxd -i -n sc_utf8 sc_utf8.bin > sc_utf8.c
 ```
