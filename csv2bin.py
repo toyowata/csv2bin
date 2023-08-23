@@ -3,7 +3,7 @@
 import csv
 import os, argparse
 
-parser = argparse.ArgumentParser(description='Convert station code CVS file to binary file')    # 2. パーサを作る
+parser = argparse.ArgumentParser(description='Convert station code CVS file to binary file')
 
 parser.add_argument('input', help='input CSV file')
 parser.add_argument('out', help='output binary file')
@@ -19,11 +19,6 @@ if args.debug == True:
 MAX_LINE_CHAR = 40
 MAX_STATION_CHAR = 40
 
-# Column 1 : Area code (int, 1-byte)
-# Column 2 : Route code (int, 1-byte)
-# Column 3 : Station code (int, 1-byte)
-# Column 4 : Route name (string, max 40-bytes)
-# Column 5 : Station name (string, max 40-bytes)
 
 def bytes_to_c_arr(data, lowercase=True):
     return [format(b, '#04x' if lowercase else '#04X') for b in data]
@@ -45,6 +40,12 @@ def main():
             s = "const unsigned char " + array_name + "[] = {\n"
             fout.write(s)
 
+        # Column 1 : Area code (int, 1-byte)
+        # Column 2 : Route code (int, 1-byte)
+        # Column 3 : Station code (int, 1-byte)
+        # Column 4 : Route name (string, max 40-bytes)
+        # Column 5 : Station name (string, max 40-bytes)
+
         for row in reader:
             nlines += 1
             area = int(row[0])
@@ -65,10 +66,12 @@ def main():
             bary.extend(row[4].encode('utf-8'))
             for y in range(MAX_STATION_CHAR - station_len):
                 bary.append(0)
-            if MAX_LINE_CHAR <= line_len:
-                print("*** error ***", area, line, station)
-            if MAX_STATION_CHAR <= station_len:
-                print("*** error ***", area, line, station)
+            
+            if MAX_LINE_CHAR < line_len:
+                print("*** ERROR:", area, line, station)
+            if MAX_STATION_CHAR < station_len:
+                print("*** ERROR:", area, line, station)
+            
             if args.format == 'hex':
                 s = "    " + format(", ".join(bytes_to_c_arr(bary))) + ',\n'
                 fout.write(s)
