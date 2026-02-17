@@ -9,3 +9,4 @@ mbed-os
 
 *.bin
 sc_utf8.h
+test/print_sc_utf8
