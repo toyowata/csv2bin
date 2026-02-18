@@ -52,9 +52,13 @@ static int find_station(int area, int line, int station,
 static void print_usage_jp(const char *prog) {
     printf("使い方:\n");
     printf("  %s                 全駅を表示\n", prog);
+    printf("  %s エリア           指定エリアの駅を表示\n", prog);
+    printf("  %s エリア 路線      指定エリア・路線の駅を表示\n", prog);
     printf("  %s エリア 路線 駅   指定した駅を表示\n", prog);
     printf("\n");
     printf("例:\n");
+    printf("  %s 0\n", prog);
+    printf("  %s 0 239\n", prog);
     printf("  %s 0 239 20\n", prog);
     printf("\n");
     printf("備考:\n");
@@ -78,6 +82,11 @@ int main(int argc, char **argv) {
         int line = atoi(argv[2]);
         int station = atoi(argv[3]);
 
+        if (area < 0 || area > 255 || line < 0 || line > 255 || station < 0 || station > 255) {
+            fprintf(stderr, "range error: 0-255 の範囲で指定してください\n");
+            return 1;
+        }
+
         char line_name[LINE_NAME_MAX + 1];
         char station_name[STATION_NAME_MAX + 1];
         if (find_station(area, line, station, line_name, sizeof(line_name),
@@ -87,6 +96,61 @@ int main(int argc, char **argv) {
         }
 
         fprintf(stderr, "not found: %d %d %d\n", area, line, station);
+        return 1;
+    }
+
+    if (argc == 3) {
+        int area = atoi(argv[1]);
+        int line = atoi(argv[2]);
+        if (area < 0 || area > 255 || line < 0 || line > 255) {
+            fprintf(stderr, "range error: 0-255 の範囲で指定してください\n");
+            return 1;
+        }
+
+        size_t off;
+        for (off = 0; off + RECORD_SIZE <= sc_utf8_len; off += RECORD_SIZE) {
+            const unsigned char *rec = sc_utf8 + off;
+            if (rec[0] != (unsigned char)area || rec[1] != (unsigned char)line) {
+                continue;
+            }
+            int station = rec[2];
+            char line_name[LINE_NAME_MAX + 1];
+            char station_name[STATION_NAME_MAX + 1];
+            decode_string(rec + 3, LINE_NAME_MAX, line_name, sizeof(line_name));
+            decode_string(rec + 3 + LINE_NAME_MAX, STATION_NAME_MAX,
+                          station_name, sizeof(station_name));
+            printf("%d %d %d %s %s\n", area, line, station, line_name, station_name);
+        }
+        return 0;
+    }
+
+    if (argc == 2) {
+        int area = atoi(argv[1]);
+        if (area < 0 || area > 255) {
+            fprintf(stderr, "range error: 0-255 の範囲で指定してください\n");
+            return 1;
+        }
+
+        size_t off;
+        for (off = 0; off + RECORD_SIZE <= sc_utf8_len; off += RECORD_SIZE) {
+            const unsigned char *rec = sc_utf8 + off;
+            if (rec[0] != (unsigned char)area) {
+                continue;
+            }
+            int line = rec[1];
+            int station = rec[2];
+            char line_name[LINE_NAME_MAX + 1];
+            char station_name[STATION_NAME_MAX + 1];
+            decode_string(rec + 3, LINE_NAME_MAX, line_name, sizeof(line_name));
+            decode_string(rec + 3 + LINE_NAME_MAX, STATION_NAME_MAX,
+                          station_name, sizeof(station_name));
+            printf("%d %d %d %s %s\n", area, line, station, line_name, station_name);
+        }
+        return 0;
+    }
+
+    if (argc != 1) {
+        print_usage_jp(argv[0]);
         return 1;
     }
 

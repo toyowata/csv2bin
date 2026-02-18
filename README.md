@@ -34,6 +34,12 @@ $ cc -O2 -I. -o test/print_sc_utf8 test/print_sc_utf8.c
 # 全駅を表示
 $ ./test/print_sc_utf8
 
+# 指定エリアの駅を表示
+$ ./test/print_sc_utf8 0
+
+# 指定エリア・路線の駅を表示（エリア 路線）
+$ ./test/print_sc_utf8 0 239
+
 # 指定した駅を表示（エリア 路線 駅）
 $ ./test/print_sc_utf8 0 239 20
 
